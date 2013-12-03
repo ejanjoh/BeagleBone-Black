@@ -8,6 +8,9 @@ BeagleBone-Black
   a “Hello world” snippet. So far the example depend on the ROM that sets up 
   the PLL’s and the clocks in a proper manner.
 
-
+- ver 1.1: Fixed line formatting. Added a test setting up the clocks needed by 
+  UART0. This is originally done by the ROM code, but this is overwriting the 
+  ROM set-up and is just a pure test; remove it if you like, it doesn’t add any 
+  extra value... 
 
 
