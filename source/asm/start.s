@@ -44,12 +44,13 @@ _start:
 
         /* Zero out the bss, tbd... */
 
-        /* Set up the interrupt vector table... */
+        /* Set up the interrupt vector table, tbd... */
 
         /* Set up the mux mapping */
         bl      CtrlModMuxUART0
 
-/* Could be removed, this is a test to set up the clock needed for UART0 */
+        /* *** Could be removed, this is a test to set up the clock needed 
+           for UART0 *** */
 
         /* Initiate clocks on UART0 */
         bl      ClockInitPll
@@ -59,7 +60,7 @@ _start:
         mov     r6, #0x2
         str     r6,     [r4, #CM_WKUP_CLKSTCTRL]
 
-/* **** */
+        /* *** */
 
         /* All relavant clocks are initiated by the ROM-code. The WKUP interface
            clocks are always on, but the functional clocks must be enabled... */
@@ -78,6 +79,13 @@ _start:
         mov     r1, #0x20
         bl      UART_PutString
 
+        /* *** test 1 *** */
+        ldr     r0, =0x44E00400         /*0x402f0400*/
+        mov     r1, #0x10
+        bl      HexDump
+
+        /* *** test end *** */
+
         /* Turn on all usr leds to indicate that we have reached this point,
            just before the dummy loop */
         mov     r0, #0xF
@@ -85,6 +93,7 @@ _start:
 
         /* Just a dummy loop; give the poor processor something to do, 
            cheerio and thanks for the fish...*/
+
 loop$:
         mov     r0, #1
         mov     r1, #15
@@ -100,7 +109,17 @@ loop$:
         .section .rodata
         .align 2
 helloWorld$:
-        .asciz "Hello world!\n\r\000????????????????????????????????"
+        .asciz "Hello world!\n\r"
+        .align 2
+
+        /*********************************************************************** 
+         * .section .data
+         *
+         **********************************************************************/
+        .section .data
+        .align 2
+tempString:
+        .ascii "--------------------------------"
         .align 2
 
 

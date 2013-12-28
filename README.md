@@ -13,4 +13,9 @@ BeagleBone-Black
   ROM set-up and is just a pure test; remove it if you like, it doesn’t add any 
   extra value... 
 
+- ver 1.1 Added some functions in the file misc.s. The added functions are:
+          + ItoA32_Hex (32 bit integer to ascii hex format)
+          + HexDump
+          + Div32
+
 
