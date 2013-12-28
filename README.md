@@ -14,8 +14,6 @@ BeagleBone-Black
   extra value... 
 
 - ver 1.2 Added some functions in the file misc.s. The added functions are:
-          ItoA32_Hex (32 bit integer to ascii hex format)
-          HexDump
-          Div32
+  ItoA32_Hex (32 bit integer to ascii hex format), HexDump and Div32
 
 
