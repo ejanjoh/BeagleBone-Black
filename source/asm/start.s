@@ -14,10 +14,12 @@
 
         /* Clock registers, see chapter 2 and 8 (AM335x TRM)*/
         /* Base */
-        .equ    CM_WKUP, 0x44E00400         /* Clock Module Wakeup Registers */
+        .equ    CM_WKUP, 0x44E00400     /* Clock Module Wakeup Registers */
+        .equ    CM_PER,  0x44E00000     /* Clock Module Peripheral Registers */
 
         /* Offset */
-        .equ    CM_WKUP_CLKSTCTRL, 0x0      /* 32 bit, base: CM_WKUP */
+        .equ    CM_WKUP_CLKSTCTRL,      0x00     /* 32 bit, base: CM_WKUP */
+        .equ    CM_PER_L3_CLKSTCTRL,    0x0C     /* 32 bit, base: CM_PER */
 
 
         /*********************************************************************** 
@@ -49,23 +51,28 @@ _start:
         /* Set up the mux mapping */
         bl      CtrlModMuxUART0
 
-        /* *** Could be removed, this is a test to set up the clock needed 
-           for UART0 *** */
+        /* *** Could be removed, all relavant clocks are initiated by the 
+               ROM_code. However, we set up the clocks needed... *** */
 
-        /* Initiate clocks on UART0 */
+        /* Initiate clock source for UART0, EMIF etc... */
         bl      ClockInitPll
 
-        /* Enforce that the CM is a up an running... */
+        /* Enforce that Clock Manager's used is a up an running... */
+        mov     r6, #0x2            /* force wake-up */
+        
         ldr     r4, =CM_WKUP
-        mov     r6, #0x2
         str     r6,     [r4, #CM_WKUP_CLKSTCTRL]
 
-        /* *** */
+        ldr     r4, =CM_PER
+        str     r6, [r4, #CM_PER_L3_CLKSTCTRL]
 
-        /* All relavant clocks are initiated by the ROM-code. The WKUP interface
-           clocks are always on, but the functional clocks must be enabled... */
-        bl      GPIO_EnableUsrLeds
+        /* *** end init clocks *** */
+
+        /* All relavant clocks are initiated by the ROM-code or above; but the 
+           clocks needs to be enabled... */
+        bl      GPIO_EnableUsrLeds          /* incl GPIO_EnableGPIO0 */
         bl      ClockEnableUART0
+        bl      ClockEnableEMIF
 
         /* Turn on usr led 0 to indicate this point */
         mov     r0, #0x1
@@ -80,10 +87,10 @@ _start:
         bl      UART_PutString
 
         /* *** test 1 *** */
-        ldr     r0, =0x44E00400         /*0x402f0400*/
-        mov     r1, #0x10
-        bl      HexDump
-
+        ldr     r0, =(CM_PER + CM_PER_L3_CLKSTCTRL)
+        mov     r1, #0x1
+        bl      HexDump         /* should print out a bit field covering:
+                                   00 00 00 16 */
         /* *** test end *** */
 
         /* Turn on all usr leds to indicate that we have reached this point,
@@ -92,7 +99,7 @@ _start:
         bl      GPIO_TurnOnUsrLed
 
         /* Just a dummy loop; give the poor processor something to do, 
-           cheerio and thanks for the fish...*/
+           cheerio and thanks for the fish... */
 
 loop$:
         mov     r0, #1
