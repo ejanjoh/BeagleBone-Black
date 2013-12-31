@@ -43,7 +43,7 @@
         /*********************************************************************** 
          * ClockEnableGPIO0
          *
-         * Enable the interface and functional clocks on GPIO1
+         * Enable the interface and functional clocks on GPIO0
          *
          * C prototype: void ClockEnableGPIO0(void) 
          **********************************************************************/
