@@ -1,0 +1,133 @@
+
+Discarded input sections
+
+ .ARM.attributes
+                0x0000000000000000       0x14 ./build/clock.o
+ .ARM.attributes
+                0x0000000000000000       0x14 ./build/ctrl_mod.o
+ .ARM.attributes
+                0x0000000000000000       0x14 ./build/gpio.o
+ .ARM.attributes
+                0x0000000000000000       0x14 ./build/misc.o
+ .ARM.attributes
+                0x0000000000000000       0x14 ./build/start.o
+ .ARM.attributes
+                0x0000000000000000       0x14 ./build/uart.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD ./build/clock.o
+LOAD ./build/ctrl_mod.o
+LOAD ./build/gpio.o
+LOAD ./build/misc.o
+LOAD ./build/start.o
+LOAD ./build/uart.o
+                0x0000000000001000                heap_size = 0x1000
+                0x0000000000001000                stack_size = 0x1000
+                0x00000000402f0400                . = 0x402f0400
+                0x00000000402f0400                _sections_start = .
+                0x00000000402f0400                _init_start = .
+
+.init           0x00000000402f0400       0x94
+ *(.init)
+ .init          0x00000000402f0400       0x94 ./build/start.o
+                0x00000000402f0400                _start
+                0x00000000402f0494                _init_end = .
+                0x00000000402f0498                . = (. + 0x4)
+                0x00000000402f0498                . = ALIGN (0x4)
+                0x00000000402f0498                _heap_start = .
+
+.heap           0x00000000402f0498     0x1000
+                0x00000000402f0498                __heap_start = .
+                0x00000000402f1498                . = (. + heap_size)
+ *fill*         0x00000000402f0498     0x1000 00
+                0x00000000402f1498                __heap_end = .
+                0x00000000402f1498                _heap_end = .
+                0x00000000402f149c                . = (. + 0x4)
+                0x00000000402f149c                . = ALIGN (0x4)
+                0x00000000402f149c                _stack_start = .
+
+.stack          0x00000000402f149c     0x1000
+                0x00000000402f149c                __stack_bottom = .
+                0x00000000402f249c                . = (. + stack_size)
+ *fill*         0x00000000402f149c     0x1000 00
+                0x00000000402f249c                __stack_top = .
+                0x00000000402f249c                _stack_end = .
+                0x00000000402f24a0                . = (. + 0x4)
+                0x00000000402f24a0                . = ALIGN (0x4)
+                0x00000000402f24a0                _text_start = .
+
+.text           0x00000000402f24a0      0x5b0
+ *(.text.startup)
+ *(.text)
+ .text          0x00000000402f24a0      0x1fc ./build/clock.o
+                0x00000000402f24a0                ClockEnableGPIO0
+                0x00000000402f24bc                ClockEnableGPIO1
+                0x00000000402f24d8                ClockEnableUART0
+                0x00000000402f24f4                ClockEnableEMIF
+                0x00000000402f2520                ClockInitPll
+ .text          0x00000000402f269c       0x28 ./build/ctrl_mod.o
+                0x00000000402f269c                CtrlModMuxUART0
+ .text          0x00000000402f26c4       0x3c ./build/gpio.o
+                0x00000000402f26c4                GPIO_EnableUsrLeds
+                0x00000000402f26e0                GPIO_TurnOnUsrLed
+ .text          0x00000000402f2700      0x1ac ./build/misc.o
+                0x00000000402f2700                ItoA32_Hex
+                0x00000000402f2754                HexDump
+                0x00000000402f2824                Div32
+ .text          0x00000000402f28ac        0x0 ./build/start.o
+ .text          0x00000000402f28ac      0x1a4 ./build/uart.o
+                0x00000000402f28ac                UART_PutChar
+                0x00000000402f28cc                UART_PutString
+                0x00000000402f2908                UART_SetupSerialUART0
+                0x00000000402f2a50                _text_end = .
+                0x00000000402f2a54                . = (. + 0x4)
+                0x00000000402f2a54                . = ALIGN (0x4)
+                0x00000000402f2a54                _bss_start = .
+
+.bss            0x00000000402f2a54        0x0
+ *(.bss)
+ .bss           0x00000000402f2a54        0x0 ./build/clock.o
+ .bss           0x00000000402f2a54        0x0 ./build/ctrl_mod.o
+ .bss           0x00000000402f2a54        0x0 ./build/gpio.o
+ .bss           0x00000000402f2a54        0x0 ./build/misc.o
+ .bss           0x00000000402f2a54        0x0 ./build/start.o
+ .bss           0x00000000402f2a54        0x0 ./build/uart.o
+ *(COMMON)
+                0x00000000402f2a54                . = ALIGN (0x4)
+                0x00000000402f2a54                _bss_end = .
+                0x00000000402f2a58                . = (. + 0x4)
+                0x00000000402f2a58                . = ALIGN (0x4)
+                0x00000000402f2a58                _rodata_start = .
+
+.rodata         0x00000000402f2a58       0x1c
+ *(.rodata)
+ .rodata        0x00000000402f2a58        0xc ./build/misc.o
+ .rodata        0x00000000402f2a64       0x10 ./build/start.o
+ *(.rodata.str1.4)
+                0x00000000402f2a74                _rodata_end = .
+                0x00000000402f2a78                . = (. + 0x4)
+                0x00000000402f2a78                . = ALIGN (0x4)
+                0x00000000402f2a78                _data_start = .
+
+.data           0x00000000402f2a78       0x20
+ *(.data)
+ .data          0x00000000402f2a78        0x0 ./build/clock.o
+ .data          0x00000000402f2a78        0x0 ./build/ctrl_mod.o
+ .data          0x00000000402f2a78        0x0 ./build/gpio.o
+ .data          0x00000000402f2a78        0x0 ./build/misc.o
+ .data          0x00000000402f2a78       0x20 ./build/start.o
+ .data          0x00000000402f2a98        0x0 ./build/uart.o
+                0x00000000402f2a98                _data_end = .
+                0x00000000402f2a9c                . = (. + 0x4)
+                0x00000000402f2a9c                . = ALIGN (0x4)
+
+/DISCARD/
+ *(*)
+                0x00000000402f2a9c                _sections_end = .
+OUTPUT(kernel.elf elf32-littlearm)

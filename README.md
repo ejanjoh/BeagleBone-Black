@@ -19,5 +19,8 @@ BeagleBone-Black
 - ver 1.3: The pll’s and clock’s needed by DDR3 512 MB SDRAM on EMIF is 
   configured and are up and running.
 
+- ver 1.4: Cleaned up the make and linker scripts.
+
+
 
 
