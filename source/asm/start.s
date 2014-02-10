@@ -6,20 +6,12 @@
  *
  *  Just a test...
  ******************************************************************************/
-
+ 
         /* ARM processor system modes */
         .equ    usr32_mode, 0b10000         /* user mode */
         .equ    sys32_mode, 0b11111         /* system mode */
         .equ    svc32_mode, 0b10011         /* supervisor mode */
 
-        /* Clock registers, see chapter 2 and 8 (AM335x TRM)*/
-        /* Base */
-        .equ    CM_WKUP, 0x44E00400     /* Clock Module Wakeup Registers */
-        .equ    CM_PER,  0x44E00000     /* Clock Module Peripheral Registers */
-
-        /* Offset */
-        .equ    CM_WKUP_CLKSTCTRL,      0x00     /* 32 bit, base: CM_WKUP */
-        .equ    CM_PER_L3_CLKSTCTRL,    0x0C     /* 32 bit, base: CM_PER */
 
 
         /*********************************************************************** 
@@ -41,44 +33,28 @@ _start:
         orr     r1, r1, r0
         msr     cpsr_c, r1
 
-        /* Set up the stack */
+        /* Set up the stack pointer */
         ldr     sp, =__stack_top
 
-        /* Zero out the bss, tbd... */
+        /* Zero out the bss, to be done... */
 
-        /* Set up the interrupt vector table, tbd... */
+        /* Set up the interrupt vector table, to be done... */
 
-        /* Set up the mux mapping */
+        /* Set up the mux mapping needed. */
         bl      CtrlModMuxUART0
 
-        /* *** Could be removed, all relavant clocks are initiated by the 
-               ROM_code. However, we set up the clocks needed... *** */
+        /* Set up and initiate all PLLs and clocks needed by the system. */
+        bl      ClockSetup
 
-        /* Initiate clock source for UART0, EMIF etc... */
-        bl      ClockInitPll
-
-        /* Enforce that Clock Manager's used is a up an running... */
-        mov     r6, #0x2            /* force wake-up */
+        /* Enable user leds (incl GPIO_EnableGPIO0) */
+        bl      GPIO_EnableUsrLeds
         
-        ldr     r4, =CM_WKUP
-        str     r6,     [r4, #CM_WKUP_CLKSTCTRL]
-
-        ldr     r4, =CM_PER
-        str     r6, [r4, #CM_PER_L3_CLKSTCTRL]
-
-        /* *** end init clocks *** */
-
-        /* All relavant clocks are initiated by the ROM-code or above; but the 
-           clocks needs to be enabled... */
-        bl      GPIO_EnableUsrLeds          /* incl GPIO_EnableGPIO0 */
-        bl      ClockEnableUART0
-        bl      ClockEnableEMIF
-
         /* Turn on usr led 0 to indicate this point */
         mov     r0, #0x1
         bl      GPIO_TurnOnUsrLed
-
-        /* Set baud rate, data bits etc */
+        
+        /* Set baud rate, data bits etc needed by the UART for serial 
+           communiction*/
         bl      UART_SetupSerialUART0
 
         /* Put something on UART0 */
@@ -86,12 +62,11 @@ _start:
         mov     r1, #0x20
         bl      UART_PutString
 
-        /* *** test 1 *** */
-        ldr     r0, =(CM_PER + CM_PER_L3_CLKSTCTRL)
-        mov     r1, #0x1
-        bl      HexDump         /* should print out a bit field covering:
-                                   00 00 00 16 */
-        /* *** test end *** */
+        /* Set up and configure the (L3) EMIF - DDR3 SDRAM */
+        bl      Config_EMIF_DDR3_SDRAM
+
+        /* Test the SDRAM - performs a linear test on the SDRAM */
+        bl      TestSDRAM
 
         /* Turn on all usr leds to indicate that we have reached this point,
            just before the dummy loop */

@@ -44,10 +44,6 @@
         .align 2
         .global GPIO_EnableUsrLeds
 GPIO_EnableUsrLeds:
-        stmfd   sp!, {lr}
-
-        /* Enable clock for GPIO1 (usr leds) */
-        bl      ClockEnableGPIO1
 
         /* Set the usr leds as output */
         ldr     r0, =GPIO1
@@ -55,7 +51,7 @@ GPIO_EnableUsrLeds:
         bic     r1, r1, #(GPIO_ALL_USR_LEDS)
         str     r1, [r0, #GPIO_OE]
 
-        ldmfd   sp!, {pc}
+        mov     pc, lr
 
 
         /*********************************************************************** 

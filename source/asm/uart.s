@@ -64,7 +64,7 @@ UART_PutChar:
 
 
         /*********************************************************************** 
-         * UART_PutString
+         * 
          *
          * Transmit or put a null terminated string on UART0/serial interface.
          * If there is a null termination before the len:th char it will stop 

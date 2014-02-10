@@ -16,10 +16,12 @@
     .equ    CM_PER,     0x44E00000 /* Clock Module Peripheral Registers */
 
 /* Clock Offset */
+    .equ    CM_PER_L3_CLKSTCTRL,    0x0C     /* 32 bit, base: CM_PER */
     .equ    CM_PER_EMIF_CLKCTRL,    0x28    /* 32 bit, base: CM_PER  */
     .equ    CM_PER_GPIO1_CLKCTRL,   0xAC    /* 32 bit, base: CM_PER  */
     .equ    CM_PER_L3_CLKCTRL,      0xE0    /* 32 bit, base: CM_PER  */
 
+    .equ    CM_WKUP_CLKSTCTRL,      0x00    /* 32 bit, base: CM_WKUP */
     .equ    CM_WKUP_GPIO0_CLKCTRL,  0x08    /* 32 bit, base: CM_WKUP */
     .equ    CM_IDLEST_DPLL_DDR,     0x34    /* 32 bit, base: CM_WKUP */
     .equ    CM_CLKSEL_DPLL_DDR,     0x40    /* 32 bit, base: CM_WKUP */
@@ -38,6 +40,43 @@
     .equ    CM_DIV_M6_DPLL_CORE,    0xD8    /* 32 bit, base: CM_WKUP */
 
 
+
+
+        /*********************************************************************** 
+         * ClockSetup
+         *
+         * Setup all PLLs and clocks needed by the system.
+         *
+         * Note: Almost all relavant clocks are initiated by the ROM_code 
+         *       earlier in the boot process. However, our attempt is to set up
+         *       the PLLs and clocks needed by this system.
+         *
+         * C prototype: void ClockSetup(void) 
+         **********************************************************************/
+        .section .text
+        .code 32
+        .align 2
+        .global ClockSetup
+ClockSetup:
+stmfd   sp!, {fp, lr}
+
+        /* Initiate clock source for UART0, EMIF etc... */
+        bl      ClockInitPll
+
+        /* Enforce that Clock Managers used is a up an running... */
+        mov     r6, #0x2            /* force wake-up */
+        
+        ldr     r4, =CM_WKUP
+        str     r6,     [r4, #CM_WKUP_CLKSTCTRL]
+
+        ldr     r4, =CM_PER
+        str     r6, [r4, #CM_PER_L3_CLKSTCTRL]
+
+        bl      ClockEnableUART0
+        bl      ClockEnableEMIF
+        bl      ClockEnableGPIO1
+
+        ldmfd   sp!, {fp, pc}
 
 
         /*********************************************************************** 
@@ -259,7 +298,8 @@ ClockInitPll:
         ldr     val, [base, #CM_CLKSEL_DPLL_DDR]
         ldr     tmp, =0x7FFFF
         bic     val, val, tmp
-        ldr     tmp, =(266 << 8)
+        /*ldr     tmp, =(266 << 8)*/
+        ldr     tmp, =(400 << 8)
         orr     val, val, tmp                           /* M - value */
         orr     val, val, #23                           /* N - value */
         str     val, [base, #CM_CLKSEL_DPLL_DDR]

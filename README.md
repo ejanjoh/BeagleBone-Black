@@ -21,6 +21,10 @@ BeagleBone-Black
 
 - ver 1.4: Cleaned up the make and linker scripts.
 
+- ver 1.5: Added a setup of the L3 EMIF DDR3 SDRAM found on the BBB. In addition
+           a linear test of the SDRAM has has been added. This is not a full
+           test, just an indication the SDRAM has been set up correct.
+
 
 
 

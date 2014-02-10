@@ -7,7 +7,7 @@
 ################################################################################
 
 # Toolchain:
-TOOLCHAIN       ?= ./../../tools/cross/linaro/gcc-arm-none-eabi-4_7-2013q3/bin/
+TOOLCHAIN       ?=~/bin/tools/cross/linaro/gcc-arm-none-eabi-4_7-2013q3/bin/
 
 ARM_AS          ?= $(TOOLCHAIN)arm-none-eabi-as
 ARM_CC          ?= $(TOOLCHAIN)arm-none-eabi-gcc
@@ -15,8 +15,8 @@ ARM_LD          ?= $(TOOLCHAIN)arm-none-eabi-ld
 ARM_OC          ?= $(TOOLCHAIN)arm-none-eabi-objcopy
 ARM_OD          ?= $(TOOLCHAIN)arm-none-eabi-objdump
 
-HEX_DUMP        ?= ./../../tools/hexdump
-APPEND_HEAD     ?= ./../../tools/append_gp_header
+HEX_DUMP        ?=~/bin/tools/hexdump
+APPEND_HEAD     ?=~/bin/tools/append_gp_header
 
 # Main directories:
 CROSS           = ./
@@ -94,8 +94,8 @@ $(BUILD_FILES)%.o : $(C_FILES)%.c
 
 # Rule to assembly the asm-files:
 $(BUILD_FILES)%.o : $(ASM_FILES)%.s
-	#$(ARM_CC) $(ASFLAGS) -c $< -o $@
-	$(ARM_AS) -c $< -o $@
+	$(ARM_CC) $(ASFLAGS) -c $< -o $@
+	#$(ARM_AS) -c $< -o $@
 
 # Rule to clean up a previous build:
 clean :

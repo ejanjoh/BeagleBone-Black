@@ -4,9 +4,11 @@
  *  Jan Johansson (ejanjoh)
  *  2013-11-15
  *
+ *  Updated:
+ *      - 2014-01-19: Added support for EMIF and DDR3 SDRAM
+ *
  *  Reference: 
- *      - chapter 9 (AM335x TRM)
- *      - AM335x Data Sheet
+ *      (1) TI Reference Manual AM335x Cortex A8 Microprocessors
  *
  ******************************************************************************/
 
@@ -16,7 +18,7 @@
 
 /* CTRLMOD Offset */
     .equ    CONF_UART0_RXD,     0x970           /* 32 bit, base CTRLMOD */
-    .equ    CONF_UART0_TXD,     0x974           /* 32 bit, base CTRLMOD */
+    .equ    CONF_UART0_TXD,     0x974           /* 32 bit, base CTRLMOD */    
 
 
         /*********************************************************************** 
@@ -45,6 +47,10 @@ CtrlModMuxUART0:
         str     r2, [r0, #CONF_UART0_TXD]
 
         mov     pc, lr
+
+
+
+
 
 
 

@@ -182,7 +182,7 @@ HexDump:
          *
          * Perform a 32 bit integer division, using binary long division. No 
          * error handling will be performed, however when divided by zero the 
-         * function will return 0xFFFFFFFF and it's up to the user to detect 
+         * function will return 0xFFFFFFFF and it´s up to the user to detect 
          * this.
          *
          * C prototype: uint32_t Div32(uint_32 dividend, uint_32 divisor) 
@@ -255,6 +255,37 @@ Div32:
         .unreq  temp
 
         ldmfd   sp!, {r4, pc}
+
+
+        /*********************************************************************** 
+         * Delay
+         *
+         * Introduce a delay (if n > 0) to the costs:
+         *      - five "no operations" nop (* n)
+         *      - one add operation (* n)
+         *      - one compare operation (* n)
+         *      - one branch operation (* n)
+         *      - function call
+         *
+         * C prototype: void Delay(const uint_32 n) 
+         **********************************************************************/
+        .section .text
+        .code 32
+        .align 2
+        .global Delay
+Delay:
+        mov     r1, #0
+1:
+        add     r1, r1, #1
+        nop
+        nop
+        nop
+        nop
+        nop
+        cmp     r1, r0
+        bne     1b
+        
+        mov     pc, lr
 
 
         /*********************************************************************** 
