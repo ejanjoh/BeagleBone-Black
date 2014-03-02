@@ -25,6 +25,8 @@ BeagleBone-Black
            a linear test of the SDRAM has has been added. This is not a full
            test, just an indication the SDRAM has been set up correct.
 
+- ver 1.6: Added notifications on exceptions. Moved code from public RAM to
+  L3 SDRAM and executed it.
 
 
 

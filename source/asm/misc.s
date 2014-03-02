@@ -79,7 +79,7 @@ ItoA32_Hex:
          * the following (nbr - 1) words. The output is availible as hex values. 
          * No check is performed on the first in parameter "addr".
          *
-         * C prototype: void HexDump(uint32_t addr, uint32_t nbr) 
+         * C prototype: void HexDump(uint32_t addr, uint32_t wrds) 
          **********************************************************************/
         .section .text
         .code 32
@@ -89,8 +89,8 @@ HexDump:
         stmfd   sp!, {fp, lr}
 
         /* Local variables 
-        fp + 4:     16 bits to store the ascii repr. for the address
-        fp + 20:    16 bits to store the ascii repr. for the value in hex
+        fp + 4:     16 bytes to store the ascii repr. for the address
+        fp + 20:    16 bytes to store the ascii repr. for the value in hex
         */
         sub     sp, sp, #36
         mov     fp, sp
@@ -255,6 +255,104 @@ Div32:
         .unreq  temp
 
         ldmfd   sp!, {r4, pc}
+
+
+        /*********************************************************************** 
+         * MemSet32
+         *
+         * Sets the first number words of the block of memory pointed by pAddr
+         * to the specified value.
+         *
+         * C prototype: void MemSet32(void *pAddr, 
+         *                            const uint32_t value,
+         *                            uint32_t words)
+         **********************************************************************/
+        .section .text
+        .code 32
+        .align 2
+        .global MemSet32
+MemSet32:
+
+        addr   .req r0      /* pointer to the address */
+        val    .req r1      /* the value to be set */
+        wrds   .req r2      /* number of words to be copied */
+
+        stmfd   sp!, {r4-r11, lr}
+
+        mov     r4, val
+        mov     r5, val
+        mov     r6, val
+        mov     r7, val
+        mov     r8, val
+        mov     r9, val
+        mov     r10, val
+        mov     r11, val
+
+8:
+        cmp     wrds, #7
+        bls     1f
+        stmia   addr!, {r4-r11}
+        sub     wrds, wrds, #8
+        b       8b
+
+1:
+        cmp     wrds, #0
+        beq     0f
+        stmia   addr!, {r4}
+        sub     wrds, wrds, #1
+        b       1b
+
+0:
+        ldmfd   sp!, {r4-r11, pc}
+        .unreq addr
+        .unreq val
+        .unreq wrds
+
+
+        /*********************************************************************** 
+         * MemCopy32
+         *
+         * Copies the values of the number of words from the location pointed by
+         * the source directly to the memory block pointed by destination.
+         *
+         * C prototype: void MemCopy32(void *pSource,
+         *                             void *pDest,
+         *                             uint32_t words)
+         *
+         **********************************************************************/
+        .section .text
+        .code 32
+        .align 2
+        .global MemCopy32
+MemCopy32:
+
+        src     .req r0             /* pointer to the source */
+        dest    .req r1             /* pointer to the destination */
+        wrds    .req r2             /* number of words to be copied */
+
+        stmfd   sp!, {r4-r11, lr}
+
+8:
+        cmp     wrds, #7
+        bls     1f
+        ldmia   src!, {r4-r11}
+        stmia   dest!, {r4-r11}
+        sub     wrds, wrds, #8
+        b       8b
+
+1:
+        cmp     wrds, #0
+        beq     0f
+        ldmia   src!, {r4}
+        stmia   dest!, {r4}
+        sub     wrds, wrds, #1
+        b       1b
+
+0:
+        ldmfd   sp!, {r4-r11, pc}
+        .unreq src
+        .unreq dest
+        .unreq wrds
 
 
         /*********************************************************************** 

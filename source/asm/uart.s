@@ -64,7 +64,7 @@ UART_PutChar:
 
 
         /*********************************************************************** 
-         * 
+         * UART_PutString
          *
          * Transmit or put a null terminated string on UART0/serial interface.
          * If there is a null termination before the len:th char it will stop 
@@ -101,6 +101,34 @@ UART_PutString:
 
 10:
         ldmfd   sp!, {r4, pc}
+
+
+         /*********************************************************************** 
+         * UART_PutHex32
+         *
+         * Prints out an integer on hexadecimal form on uart. 
+         *
+         * C prototype: void UART_PutHex32(uint32_t hex)
+         **********************************************************************/
+        .section .text
+        .code 32
+        .align 2
+        .global UART_PutHex32
+UART_PutHex32:
+
+        stmfd   sp!, {fp, lr}
+
+        sub     fp, lr, #16         /* 11 bytes will be used... */
+        mov     r1, fp
+        bl      ItoA32_Hex
+
+        mov     r0, fp
+        mov     r1, #11
+        bl      UART_PutString
+
+        add     lr, fp, #16
+        ldmfd   sp!, {fp, pc}
+
 
         /*********************************************************************** 
          *  UART_SetupSerialUART0
